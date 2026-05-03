@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-05-04 AI 情报速递</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: "Noto Serif SC", "Source Han Serif SC", "STSong", Georgia, serif;
+    background: #F7F8F9;
+    color: #1A1C1D;
+    line-height: 1.7;
+}
+.page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #F7F8F9;
+    min-height: 100vh;
+    box-shadow: 0 0 40px rgba(0,0,0,0.06);
+}
+/* ── 日期导航条 ── */
+.date-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: #EEF0F1;
+    font-size: 13px;
+    border-bottom: 1px solid #DEE0E2;
+}
+.date-nav a {
+    color: #1A1C1D;
+    text-decoration: none;
+    border-bottom: 1px dashed #878A8C;
+    font-weight: 600;
+}
+.date-nav a:hover { border-bottom-style: solid; }
+/* ── Header ── */
+.header {
+    background: linear-gradient(180deg, #1A1C1D 0%, #3D4042 22%, #6B6E70 48%, #B7B9BB 72%, #F7F8F9 100%);
+    color: #FFFFFF;
+    padding: 44px 32px 36px;
+    text-align: center;
+}
+.header h1 {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 6px;
+}
+.header .date {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin-bottom: 2px;
+}
+.header .subtitle {
+    font-size: 17px;
+    font-weight: 600;
+    opacity: 0.85;
+}
+/* ── 排行榜 ── */
+.leaderboard {
+    margin: -14px 24px 0;
+    background: #FFFFFF;
+    border: 1.5px solid #DEE0E2;
+    border-radius: 8px;
+    padding: 18px 22px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.lb-header {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid #DEE0E2;
+    color: #1A1C1D;
+}
+.rank-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    background: #F7F8F9;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #1A1C1D;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.rank-item:hover {
+    background: #EEF0F1;
+    border-left-color: #3D4042;
+    transform: translateX(4px);
+}
+.rank-num {
+    width: 26px; height: 26px;
+    background: #1A1C1D;
+    color: #FFFFFF;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+}
+.rank-emoji { font-size: 18px; flex-shrink: 0; }
+.rank-label {
+    font-size: 11px; font-weight: 600;
+    color: #878A8C;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 48px;
+}
+.rank-title {
+    font-weight: 600; font-size: 14px;
+    flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rank-why {
+    font-size: 12px; color: #878A8C;
+    flex: 0 0 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-align: right;
+}
+/* ── 筛选按钮 ── */
+.source-nav {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin: 20px 24px 8px;
+    flex-wrap: wrap;
+}
+.flt-btn {
+    padding: 6px 18px;
+    background: #FFFFFF;
+    border: 1px solid #DEE0E2;
+    border-radius: 18px;
+    cursor: pointer;
+    color: #1A1C1D;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.flt-btn:hover {
+    background: #EEF0F1;
+}
+.flt-btn.active {
+    background: #1A1C1D;
+    color: #FFFFFF;
+    border-color: #1A1C1D;
+}
+/* ── 新闻卡片 ── */
+.news-card {
+    margin: 10px 24px;
+    padding: 18px 22px;
+    background: #FFFFFF;
+    border: 1px solid #DEE0E2;
+    border-radius: 6px;
+    transition: box-shadow 0.15s;
+}
+.news-card:hover {
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+.news-card:target {
+    border-left: 4px solid #1A1C1D;
+    background: #F7F8F9;
+    animation: flash-target 1.5s ease-out;
+}
+@keyframes flash-target {
+    0%   { background: #EEF0F1; }
+    100% { background: #F7F8F9; }
+}
+.card-source {
+    font-size: 11px;
+    color: #878A8C;
+    margin-bottom: 3px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.card-title {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.card-title-link {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1A1C1D;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+}
+.card-title-link:hover {
+    border-bottom-color: #878A8C;
+}
+.card-meta {
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+.stars { font-weight: 600; color: #878A8C; }
+.card-desc {
+    font-size: 13px;
+    color: #3D4042;
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 6px;
+}
+.tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: #EEF0F1;
+    border-radius: 10px;
+    color: #1A1C1D;
+}
+.summary {
+    font-size: 13px;
+    color: #1A1C1D;
+    background: #F7F8F9;
+    padding: 10px 14px;
+    border-radius: 4px;
+    line-height: 1.8;
+    margin-top: 3px;
+}
+/* ── 底部 ── */
+.bottom-quote {
+    margin: 20px 24px;
+    padding: 18px 22px;
+    background: #1A1C1D;
+    color: #FFFFFF;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: #878A8C;
+}
+/* ── 底部日期导航 ── */
+.bottom-nav {
+    text-align: center;
+    padding: 0 24px 20px;
+    font-size: 13px;
+}
+.bottom-nav a {
+    color: #1A1C1D;
+    text-decoration: none;
+    border-bottom: 1px dashed #878A8C;
+    font-weight: 600;
+}
+.bottom-nav a:hover { border-bottom-style: solid; }
+/* ── 悬浮按钮 ── */
+#back-top {
+    position: fixed;
+    bottom: 36px;
+    right: 36px;
+    width: 44px;
+    height: 44px;
+    background: #1A1C1D;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: all 0.25s;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    z-index: 999;
+}
+#back-top.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+#back-top:hover {
+    background: #3D4042;
+    transform: translateY(-2px);
+}
+@media (max-width: 600px) {
+    .header { padding: 32px 16px 28px; }
+    .header .date { font-size: 22px; }
+    .leaderboard { margin: -10px 12px 0; padding: 14px; }
+    .rank-item { flex-wrap: wrap; gap: 6px; }
+    .rank-why { flex: 1 1 100%; text-align: left; font-size: 11px; }
+    .news-card { margin: 8px 12px; padding: 14px; }
+    .bottom-quote { margin: 14px 12px; }
+    .source-nav { margin: 14px 12px 6px; gap: 6px; }
+    .date-nav { padding: 10px 14px; font-size: 12px; }
+    #back-top { bottom: 16px; right: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="date-nav">
+    <a href="/ai-daily/">📋 查看其他日期</a>
+    <span>2026-05-04</span>
+    <a href="/ai-daily/">📋 查看其他日期</a>
+</div>
+
+<div class="header">
+    <h1>🗞️ AI 情报速递</h1>
+    <div class="date">2026年5月4日 星期一</div>
+    <div class="subtitle">今日日报</div>
+</div>
+
+
+        <div class="leaderboard">
+            <div class="lb-header">🏆 今日排行榜</div>
+            
+            <a href="#gh-5" class="rank-item">
+                <span class="rank-num">1</span>
+                <span class="rank-emoji">🏛</span>
+                <span class="rank-label">经典款</span>
+                <span class="rank-title">ollama/ollama</span>
+                <span class="rank-why">170K stars，本地 LLM 部署的事实标准，生态最完善</span>
+            </a>
+            <a href="#hn-18" class="rank-item">
+                <span class="rank-num">2</span>
+                <span class="rank-emoji">🐎</span>
+                <span class="rank-label">黑马</span>
+                <span class="rank-title">An AI agent published a hit piece on me</span>
+                <span class="rank-why">揭示了 AI Agent 滥用风险，安全验证工具需求即将爆发</span>
+            </a>
+            <a href="#hn-29" class="rank-item">
+                <span class="rank-num">3</span>
+                <span class="rank-emoji">💥</span>
+                <span class="rank-label">颠覆式创新</span>
+                <span class="rank-title">AI solves International Math Olympiad problems at silver medal level</span>
+                <span class="rank-why">AI 数理推理能力达到人类竞赛水平，教育科研将被重构</span>
+            </a>
+        </div>
+
+<div class="source-nav"><button class="flt-btn active" data-target="all">📋 全部</button><button class="flt-btn" data-target="github">🐙 GitHub</button><button class="flt-btn" data-target="hackernews">📰 Hacker News</button></div>
+
+<div id="card-container">
+
+        <div class="news-card" data-source="github" id="gh-0">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/openclaw/openclaw" target="_blank" class="card-title-link">openclaw/openclaw</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 367,814</span>
+            </div>
+            <div class="card-desc">Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 </div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">assistant</span><span class="tag">crustacean</span><span class="tag">molty</span><span class="tag">openclaw</span></div>
+            <div class="summary">▸ 全平台个人 AI 助手框架，支持 Windows/macOS/Linux/移动端，能操控浏览器、执行命令、管理日程。<br>▸ 367K stars 统治级热度，插件生态丰富，已成为个人 AI Agent 的事实标准之一。<br>▸ 国内开发者可借鉴其多平台统一架构设计，或直接基于它做本地化 AI 助手产品。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-1">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/tensorflow/tensorflow" target="_blank" class="card-title-link">tensorflow/tensorflow</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 194,977</span>
+            </div>
+            <div class="card-desc">An Open Source Machine Learning Framework for Everyone</div>
+            <div class="tags"><span class="tag">deep-learning</span><span class="tag">deep-neural-networks</span><span class="tag">distributed</span><span class="tag">machine-learning</span><span class="tag">ml</span></div>
+            <div class="summary">▸ Google 出品的端到端开源机器学习框架，覆盖训练到部署全流程。<br>▸ 生态成熟度最高，195K stars，配套 TF Lite/JS/Serving 覆盖边缘到云端。<br>▸ 虽有 PyTorch 挑战，但在工业部署场景仍是首选，适合做生产级 ML 落地。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-2">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/n8n-io/n8n" target="_blank" class="card-title-link">n8n-io/n8n</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 186,551</span>
+            </div>
+            <div class="card-desc">Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.</div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">apis</span><span class="tag">automation</span><span class="tag">cli</span><span class="tag">data-flow</span></div>
+            <div class="summary">▸ 公平代码许可的工作流自动化平台，支持 400+ 集成 + 可视化编排 + AI 节点。<br>▸ 186K stars，自托管友好，比 Zapier/Make 更灵活，AI-native 工作流是亮点。<br>▸ 对国内低代码/无代码赛道有直接参考价值，可与国产 LLM 集成做企业自动化。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-3">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/Significant-Gravitas/AutoGPT" target="_blank" class="card-title-link">Significant-Gravitas/AutoGPT</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 183,954</span>
+            </div>
+            <div class="card-desc">AutoGPT is the vision of accessible AI for everyone, to use and to build on. Our mission is to provide the tools, so that you can focus on what matters.</div>
+            <div class="tags"><span class="tag">agentic-ai</span><span class="tag">agents</span><span class="tag">ai</span><span class="tag">artificial-intelligence</span><span class="tag">autonomous-agents</span></div>
+            <div class="summary">▸ 旨在让每个人都能使用和构建 AI 的自主 Agent 平台，184K stars。<br>▸ 开创了「给 AI 一个目标让它自己干」的范式，虽实用性有争议但概念启发了整个 Agent 赛道。<br>▸ 国内 AI Agent 创业的重要参照系，关注其从实验项目到实用化转型的进展。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-4">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/affaan-m/everything-claude-code" target="_blank" class="card-title-link">affaan-m/everything-claude-code</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 172,511</span>
+            </div>
+            <div class="card-desc">The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.</div>
+            <div class="tags"><span class="tag">ai-agents</span><span class="tag">anthropic</span><span class="tag">claude</span><span class="tag">claude-code</span><span class="tag">developer-tools</span></div>
+            <div class="summary">▸ Agent harness 性能优化系统，覆盖 Claude Code/Codex/Cursor 等多平台。<br>▸ 172K stars 惊人增速，聚焦 skills、记忆、安全、research-first 开发范式。<br>▸ AI 编程工具的「瑞士军刀」，值得国内 IDE 厂商研究其 Agent 编排思路。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-5">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/ollama/ollama" target="_blank" class="card-title-link">ollama/ollama</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 170,605</span>
+            </div>
+            <div class="card-desc">Get up and running with Kimi-K2.5, GLM-5, MiniMax, DeepSeek, gpt-oss, Qwen, Gemma and other models.</div>
+            <div class="tags"><span class="tag">deepseek</span><span class="tag">gemma</span><span class="tag">gemma3</span><span class="tag">glm</span><span class="tag">go</span></div>
+            <div class="summary">▸ 一键运行本地 LLM 的工具，支持 Kimi/GLM/DeepSeek/Qwen 等国产模型。<br>▸ 170K stars，极大降低了本地 AI 部署门槛，已成为个人 & 小团队标配。<br>▸ 国内开发者可直接用于构建私有化 AI 应用，也是边缘 AI 设备的核心组件。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-6">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" target="_blank" class="card-title-link">AUTOMATIC1111/stable-diffusion-webui</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 162,702</span>
+            </div>
+            <div class="card-desc">Stable Diffusion web UI</div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">ai-art</span><span class="tag">deep-learning</span><span class="tag">diffusion</span><span class="tag">gradio</span></div>
+            <div class="summary">▸ Stable Diffusion 最流行的 Web UI，162K stars，AI 绘画的入门标准工具。<br>▸ 丰富的扩展生态（ControlNet/AnimateDiff 等），社区活跃度极高。<br>▸ AI 图像生成的标杆项目，国内同类产品可参考其插件架构和用户体验设计。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-7">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/f/prompts.chat" target="_blank" class="card-title-link">f/prompts.chat</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 161,445</span>
+            </div>
+            <div class="card-desc">f.k.a. Awesome ChatGPT Prompts. Share, discover, and collect prompts from the community. Free and open source — self-host for your organization with complete privacy.</div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">artificial-intelligence</span><span class="tag">awesome-list</span><span class="tag">chatgpt</span><span class="tag">chatgpt-prompts</span></div>
+            <div class="summary">▸ 开源 Prompt 收集与共享平台（原 Awesome ChatGPT Prompts），161K stars。<br>▸ 支持自托管，是企业内部 Prompt 工程知识库的理想方案。<br>▸ 对构建 Prompt 市场或企业内部 AI 培训素材库有直接参考价值。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-8">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/huggingface/transformers" target="_blank" class="card-title-link">huggingface/transformers</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 160,208</span>
+            </div>
+            <div class="card-desc">🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training. </div>
+            <div class="tags"><span class="tag">audio</span><span class="tag">deep-learning</span><span class="tag">deepseek</span><span class="tag">gemma</span><span class="tag">glm</span></div>
+            <div class="summary">▸ HuggingFace 核心模型框架，支持文本/视觉/音频/多模态的推理与训练。<br>▸ 160K stars，AI 界的 npm/PyPI，几乎任何模型都能在此找到实现。<br>▸ 国内 AI 开发的基础设施级依赖，做模型微调或应用开发必装。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-9">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/Snailclimb/JavaGuide" target="_blank" class="card-title-link">Snailclimb/JavaGuide</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 155,379</span>
+            </div>
+            <div class="card-desc">Java 面试 & 后端通用面试指南，覆盖计算机基础、数据库、分布式、高并发、系统设计与 AI 应用开发</div>
+            <div class="tags"><span class="tag">agent</span><span class="tag">context-engineering</span><span class="tag">interview</span><span class="tag">java</span><span class="tag">jvm</span></div>
+            <div class="summary">▸ Java 面试通关指南，155K stars，已扩展覆盖 AI 应用开发与 Agent 构建。<br>▸ 从纯后端面试到 AI 开发全覆盖，体现了传统技术社区向 AI 转型的趋势。<br>▸ 说明国内开发者饥渴地将 AI 知识融入现有技术栈，AI 培训/内容赛道机会巨大。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-10">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/langflow-ai/langflow" target="_blank" class="card-title-link">langflow-ai/langflow</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 147,651</span>
+            </div>
+            <div class="card-desc">Langflow is a powerful tool for building and deploying AI-powered agents and workflows.</div>
+            <div class="tags"><span class="tag">agents</span><span class="tag">chatgpt</span><span class="tag">generative-ai</span><span class="tag">large-language-models</span><span class="tag">multiagent</span></div>
+            <div class="summary">▸ 可视化 AI Agent 与工作流构建工具，低代码搭建 RAG/Multi-Agent 系统。<br>▸ 147K stars 增长迅猛，比 LangChain 更易上手，适合快速原型验证。<br>▸ 国内企业 AI 落地的入门利器，尤其适合没有专业 ML 团队的场景。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-11">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/langgenius/dify" target="_blank" class="card-title-link">langgenius/dify</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 139,967</span>
+            </div>
+            <div class="card-desc">Production-ready platform for agentic workflow development.</div>
+            <div class="tags"><span class="tag">agent</span><span class="tag">agentic-ai</span><span class="tag">agentic-framework</span><span class="tag">agentic-workflow</span><span class="tag">ai</span></div>
+            <div class="summary">▸ 生产级 Agentic 工作流开发平台，集成知识库/工具调用/对话管理。<br>▸ 140K stars，国内团队出品却全球流行，是 AI 应用层的明星项目。<br>▸ Dify 证明中国团队完全能在 AI 开发者工具赛道做出世界级产品。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-12">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools" target="_blank" class="card-title-link">x1xhlol/system-prompts-and-models-of-ai-tools</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 136,608</span>
+            </div>
+            <div class="card-desc">FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Junie, Kiro, Leap.new, Lovable, Manus, NotionAI, Orchids.app, Perplexity, Poke, Qoder, Replit, Same.dev, Trae, Traycer AI, V</div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">bolt</span><span class="tag">cluely</span><span class="tag">copilot</span><span class="tag">cursor</span></div>
+            <div class="summary">▸ 收集了 Cursor/Manus/Claude Code/Perplexity 等主流 AI 工具的系统提示词。<br>▸ 136K stars，堪称 AI 工具的「内部设计文档泄露」，对理解 Agent 设计极有价值。<br>▸ 做 AI 产品的同学必看，了解竞品的 system prompt 架构能少走弯路。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-13">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/langchain-ai/langchain" target="_blank" class="card-title-link">langchain-ai/langchain</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 135,680</span>
+            </div>
+            <div class="card-desc">The agent engineering platform</div>
+            <div class="tags"><span class="tag">agents</span><span class="tag">ai</span><span class="tag">ai-agents</span><span class="tag">anthropic</span><span class="tag">chatgpt</span></div>
+            <div class="summary">▸ Agent 工程平台，135K stars，定义了 LLM 应用开发的主流范式。<br>▸ 虽被诟病抽象过度，但其 Chains/Agents/Tools 架构仍是行业标准参考。<br>▸ 理解 LangChain 的演进路径对设计自己的 AI 框架非常重要，取其精华去其糟粕。</div>
+        </div>
+        <div class="news-card" data-source="github" id="gh-14">
+            <div class="card-source">🐙 GitHub</div>
+            <div class="card-title"><a href="https://github.com/open-webui/open-webui" target="_blank" class="card-title-link">open-webui/open-webui</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 135,333</span>
+            </div>
+            <div class="card-desc">User-friendly AI Interface (Supports Ollama, OpenAI API, ...)</div>
+            <div class="tags"><span class="tag">ai</span><span class="tag">llm</span><span class="tag">llm-ui</span><span class="tag">llm-webui</span><span class="tag">llms</span></div>
+            <div class="summary">▸ 用户友好的 LLM Web 交互界面，支持 Ollama/OpenAI API 等多种后端。<br>▸ 135K stars，部署简单、功能全面，正在成为企业级 AI Chat 界面的首选。<br>▸ 可作为内部 AI 对话平台的模板，快速搭建团队 AI 使用入口。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-15">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://news.ycombinator.com/newsguidelines.html#generated" target="_blank" class="card-title-link">Don't post generated/AI-edited comments. HN is for conversation between humans</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 4229</span>
+            </div>
+            <div class="card-desc">↑4229 pts | by usefulposter</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ HN 官方明确禁止 AI 生成评论，强调平台价值在于人类之间的真实对话。<br>▸ 4229 分极高热度，反映出社区对 AI 内容污染的真实焦虑与抵制。<br>▸ 做 AI 内容产品的信号：过度依赖 AI 生成内容可能引发社区反噬，人类策展价值在上升。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-16">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://about.fb.com/news/2024/07/open-source-ai-is-the-path-forward/" target="_blank" class="card-title-link">Open source AI is the path forward</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 2360</span>
+            </div>
+            <div class="card-desc">↑2360 pts | by atgctg</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Meta 官方博文阐述开源 AI 路线，认为开源是 AI 发展的正确方向。<br>▸ 2360 分，Llama 系列持续开源对行业产生深远影响，对抗闭源阵营。<br>▸ 开源 vs 闭源的路线之争仍是 AI 核心叙事，关注 Llama 的国内生态机会。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-17">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://fly.io/blog/youre-all-nuts/" target="_blank" class="card-title-link">My AI skeptic friends are all nuts</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 2356</span>
+            </div>
+            <div class="card-desc">↑2356 pts | by tabletcorry</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ fly.io 创始人撰文反驳 AI 怀疑论者，认为 AI 将根本性改变软件开发。<br>▸ 2356 分引发激烈讨论，代表了硅谷技术领导者对 AI 的激进乐观态度。<br>▸ 如果你还在观望 AI，这篇文章可能改变你的看法——但也要保持独立思考。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-18">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://theshamblog.com/an-ai-agent-published-a-hit-piece-on-me/" target="_blank" class="card-title-link">An AI agent published a hit piece on me</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 2346</span>
+            </div>
+            <div class="card-desc">↑2346 pts | by scottshambaugh</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 个人博主被 AI Agent 自动生成并发布了一篇针对他的攻击性文章。<br>▸ 2346 分，揭示了 AI Agent 可能被滥用于自动生成诽谤内容的真实风险。<br>▸ AI 安全和内容真实性验证工具的市场需求将爆发式增长，这是明确的创业信号。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-19">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://deepmind.google/technologies/gemini/" target="_blank" class="card-title-link">Gemini AI</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 2135</span>
+            </div>
+            <div class="card-desc">↑2135 pts | by dmotz</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Google DeepMind 的 Gemini 多模态 AI 模型官方页面。<br>▸ 2135 分，Google 在 AI 赛道持续发力，与 GPT/Claude 三足鼎立。<br>▸ Gemini 的搜索+AI 整合能力对信息获取方式有颠覆性影响，密切关注。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-20">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://ai.googleblog.com/2018/05/duplex-ai-system-for-natural-conversation.html" target="_blank" class="card-title-link">Google Duplex: An AI System for Accomplishing Real World Tasks Over the Phone</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1875</span>
+            </div>
+            <div class="card-desc">↑1875 pts | by ivank</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Google 2018 年发布的 AI 电话助手，可代替用户打电话预约餐厅等真实世界任务。<br>▸ 1875 分持续被关注，是最早展示 AI Agent 可以完成现实世界操作的重要 demo。<br>▸ 语音 AI + Agent 的经典案例，当下 Agent 热潮可以追溯到 Duplex 的启发。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-21">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.theregister.com/2025/08/21/aws_ceo_entry_level_jobs_opinion/" target="_blank" class="card-title-link">AWS CEO says using AI to replace junior staff is 'Dumbest thing I've ever heard'</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1697</span>
+            </div>
+            <div class="card-desc">↑1697 pts | by JustExAWS</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ AWS CEO 公开表示用 AI 替代初级工程师是「最愚蠢的想法」。<br>▸ 1697 分引发广泛讨论，科技巨头高管罕见地批评 AI 替代人类的叙事。<br>▸ 信号：大厂高层认为 AI 是增强而非替代，这对求职者和雇主都是重要定心丸。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-22">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://explore.zoom.us/en/terms/" target="_blank" class="card-title-link">Zoom terms now allow training AI on user content with no opt out</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1581</span>
+            </div>
+            <div class="card-desc">↑1581 pts | by isodev</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Zoom 更新服务条款，允许用用户数据训练 AI 且无法选择退出，引发隐私争议。<br>▸ 1581 分，用户对 AI 训练数据隐私的敏感度持续上升。<br>▸ 做 AI 产品必须重视数据隐私和用户选择权，这是合规风险也是产品竞争力。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-23">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.anthropic.com/glasswing" target="_blank" class="card-title-link">Project Glasswing: Securing critical software for the AI era</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1541</span>
+            </div>
+            <div class="card-desc">↑1541 pts | by Ryan5453</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Anthropic 推出 Glasswing 项目，专注于 AI 时代关键软件的安全防护。<br>▸ 1541 分，AI 安全从研究走向工程实践，Anthropic 在安全领域持续领先。<br>▸ AI 安全基础设施将成为刚需赛道，国内企业应提前布局相关能力。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-24">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.canirun.ai/" target="_blank" class="card-title-link">Can I run AI locally?</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1520</span>
+            </div>
+            <div class="card-desc">↑1520 pts | by ricardbejarano</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 一个工具网站，帮助用户判断自己的设备能否本地运行各种 AI 模型。<br>▸ 1520 分，本地 AI 运行需求旺盛，降低部署门槛的工具价值巨大。<br>▸ 边缘 AI + 本地 LLM 是明确的增长方向，工具链和评测标准是瓶颈也是机会。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-25">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.youtube.com/watch?v=LCEmiRjPEtQ" target="_blank" class="card-title-link">Andrej Karpathy: Software in the era of AI [video]</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1481</span>
+            </div>
+            <div class="card-desc">↑1481 pts | by sandslash</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ AI 教父 Karpathy 分享 AI 时代软件开发的变革，探讨程序员角色的演变。<br>▸ 1481 分，Karpathy 的内容永远是 AI 开发者必看。<br>▸ 核心观点：AI 不会替代程序员但会改变编程方式，建议拥抱 AI 工具提升效率。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-26">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.svd.se/a/K8nrV4/metas-ai-smart-glasses-and-data-privacy-concerns-workers-say-we-see-everything" target="_blank" class="card-title-link">Meta’s AI smart glasses and data privacy concerns</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1448</span>
+            </div>
+            <div class="card-desc">↑1448 pts | by sandbach</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-27">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://www.972mag.com/lavender-ai-israeli-army-gaza/" target="_blank" class="card-title-link">'Lavender': The AI machine directing Israel's bombing in Gaza</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1418</span>
+            </div>
+            <div class="card-desc">↑1418 pts | by contemporary343</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 调查报道揭露以色列军方使用名为「Lavender」的 AI 系统指导加沙轰炸目标。<br>▸ 1418 分，AI 军事化的极端案例，引发对 AI 伦理和战争规范的激烈讨论。<br>▸ AI 武器化是严肃伦理议题，技术从业者需要关注自己的工作可能被如何使用。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-28">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://clocks.brianmoore.com/" target="_blank" class="card-title-link">AI World Clocks</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1383</span>
+            </div>
+            <div class="card-desc">↑1383 pts | by waxpancake</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 一个创意项目，用 AI 生成世界各地不同风格的时钟界面。<br>▸ 1383 分，展示了 AI 在创意设计和用户界面生成方面的有趣应用。<br>▸ 小而有创意的 AI 项目往往最受欢迎——不要总想着做大而全的平台。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-29">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/" target="_blank" class="card-title-link">AI solves International Math Olympiad problems at silver medal level</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1370</span>
+            </div>
+            <div class="card-desc">↑1370 pts | by ocfnash</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ DeepMind AI 在国际数学奥林匹克竞赛中达到银牌水平。<br>▸ 1370 分，AI 在数学推理领域取得里程碑式突破。<br>▸ AI 的推理能力正在指数级增长，教育、科研、工程等领域将被深刻改变。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-30">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://dropofahat.zone/" target="_blank" class="card-title-link">I am using AI to drop hats outside my window onto New Yorkers</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1347</span>
+            </div>
+            <div class="card-desc">↑1347 pts | by jimhi</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 一个搞笑 + 技术项目，用 AI 识别路人并精准地把帽子扔到他们头上。<br>▸ 1347 分，典型的「用 AI 做无聊但好玩的事」风格，在 HN 极受欢迎。<br>▸ 启示：AI 不一定要解决严肃问题，有趣的创意项目同样能获得巨大关注。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-31">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://blog.pabloecortez.com/its-insulting-to-read-your-ai-generated-blog-post/" target="_blank" class="card-title-link">It's insulting to read AI-generated blog posts</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1300</span>
+            </div>
+            <div class="card-desc">↑1300 pts | by speckx</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ 博主抨击 AI 生成博客内容缺乏诚意，读者感觉被侮辱。<br>▸ 1300 分引发共鸣，读者对 AI 内容的质量和真诚度要求越来越高。<br>▸ AI 内容创作要重视「人味」和「真诚感」，纯机器生成正在被市场排斥。</div>
+        </div>
+        <div class="news-card" data-source="hackernews" id="hn-32">
+            <div class="card-source">📰 Hacker News</div>
+            <div class="card-title"><a href="https://antirez.com/news/158" target="_blank" class="card-title-link">Don't fall into the anti-AI hype</a></div>
+            <div class="card-meta">
+                <span class="stars">⭐ 1296</span>
+            </div>
+            <div class="card-desc">↑1296 pts | by todsacerdoti</div>
+            <div class="tags"><span class="tag">hackernews</span></div>
+            <div class="summary">▸ Redis 创始人 antirez 撰文反对当前的反 AI 炒作，理性看待 AI 的价值和局限。<br>▸ 1296 分，技术大牛从旁观者视角给出冷静分析。<br>▸ 在 AI 狂热和 AI 恐慌之间找到平衡，是技术决策者和创业者的核心能力。</div>
+        </div>
+</div>
+
+<div class="bottom-quote">💡 本地 AI 生态持续爆发，AI Agent 安全风险从理论走向现实，AI 推理能力突破奥林匹克银牌——三条信号都指向同一个方向：AI 正在从工具变成基础设施。</div>
+
+<div class="bottom-nav">
+    <a href="/ai-daily/">📋 查看其他日期</a>
+</div>
+
+<div class="footer">
+    <p>抓取时间：2026-05-04 00:10 | 来源：GitHub Trending + Hacker News + Product Hunt</p>
+    <p>由 AI Scout 自动生成 · 内容仅供参考</p>
+</div>
+
+</div>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">⬆</button>
+
+<script>
+// 回到顶部
+window.addEventListener('scroll', function() {
+    var btn = document.getElementById('back-top');
+    if (window.scrollY > 300) {
+        btn.classList.add('show');
+    } else {
+        btn.classList.remove('show');
+    }
+});
+// 来源筛选
+(function() {
+    var buttons = document.querySelectorAll('.flt-btn');
+    buttons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            buttons.forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            var target = this.getAttribute('data-target');
+            document.querySelectorAll('.news-card').forEach(function(card) {
+                if (target === 'all' || card.getAttribute('data-source') === target) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+})();
+</script>
+
+</body>
+</html>
